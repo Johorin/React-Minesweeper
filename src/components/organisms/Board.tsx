@@ -57,7 +57,6 @@ export const Board: React.FC = () => {
     // if (col > 0) newBoard[row][col - 1] = false; // 左のブロック
     // if (col < board[row].length - 1) newBoard[row][col + 1] = false; // 右のブロック
 
-    // fix
     // クリックされたブロックの上のブロックを全部開ける
     // クリックされたブロックの右のブロックを全部開ける
     // クリックされたブロックの下のブロックを全部開ける
