@@ -31,19 +31,38 @@ import React from "react";
 interface BlockProps {
   key: number;
   onClick: () => void;
+  // isOpen: boolean;
+  disabled?: boolean;
+  state: "hide" | "empty" | number;
 }
 
 export const Block: React.FC<BlockProps> = (props) => {
-  const { onClick } = props;
-  return (
-    <button
-      style={{
-        width: "50px",
-        height: "50px",
-        display: "inline-block",
-        backgroundColor: "grey"
-      }}
-      onClick={onClick}
-    />
-  );
+  switch (props.state) {
+    case "hide":
+      return (
+        <button
+          style={{
+            width: "50px",
+            height: "50px",
+            display: "inline-block",
+            backgroundColor: "grey",
+          }}
+          onClick={props.onClick}
+          disabled={false}
+        />
+      );
+    case "empty":
+      return (
+        <button
+          style={{
+            width: "50px",
+            height: "50px",
+            backgroundColor: "white",
+          }}
+          onClick={props.onClick}
+          disabled={true}
+        />
+      );
+    default:
+  }
 };

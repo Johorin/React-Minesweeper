@@ -40,31 +40,39 @@ import React, { useState } from "react";
 import { Block } from "../atoms/button/Block";
 
 export const Board: React.FC = () => {
-  const [board, setBoard] = useState<boolean[][]>([
-    [true, true, true, true, true],
-    [true, true, true, true, true],
-    [true, true, true, true, true],
-    [true, true, true, true, true],
-    [true, true, true, true, true]
+  const tileNum: number = 5;
+  const [board, setBoard] = useState<string[][]>([
+    ["hide", "hide", "hide", "hide", "hide"],
+    ["hide", "hide", "hide", "hide", "hide"],
+    ["hide", "hide", "hide", "hide", "hide"],
+    ["hide", "hide", "hide", "hide", "hide"],
+    ["hide", "hide", "hide", "hide", "hide"],
   ]);
+  const [isStartedGame, setIsStartedGame] = useState(false);
 
-  const handleClick = (row: number, col: number) => {
+  /**
+   * 一番初めにクリックすると爆弾がないブロックがまとめて開かれる処理
+   */
+  const firstHandleClick = (row: number, col: number, isOpen: boolean) => {
     const newBoard = [...board];
 
-    newBoard[row][col] = false; // クリックされたブロックを開ける
-    // if (row > 0) newBoard[row - 1][col] = false; // 上のブロック
-    // if (row < board.length - 1) newBoard[row + 1][col] = false; // 下のブロック
-    // if (col > 0) newBoard[row][col - 1] = false; // 左のブロック
-    // if (col < board[row].length - 1) newBoard[row][col + 1] = false; // 右のブロック
-
-    // クリックされたブロックの上のブロックを全部開ける
-    // クリックされたブロックの右のブロックを全部開ける
-    // クリックされたブロックの下のブロックを全部開ける
-    // クリックされたブロックの左のブロックを全部開ける
-
+    // クリックされたブロックの上下左右のブロックを全部開ける
+    for (let i = 0; i < tileNum; i++) {
+      for (let j = 0; j < tileNum; j++) {
+        if (i === row || j === col) {
+          newBoard[i][j] = "empty";
+        }
+      }
+    }
+    console.log(newBoard);
     setBoard(newBoard);
-    console.log(board);
+    setIsStartedGame(true);
+    setBom();
   };
+
+  const setBom = () => {};
+
+  const secondHandleClick = (row: number, col: number, isOpen: boolean) => {};
 
   return (
     <div>
@@ -72,15 +80,27 @@ export const Board: React.FC = () => {
         <div
           key={rowIndex}
           style={{
-            height: "50px"
+            height: "50px",
           }}
         >
-          {row.map((block, colIndex) => (
-            <Block
-              key={colIndex}
-              onClick={() => handleClick(rowIndex, colIndex)}
-            />
-          ))}
+          {row.map((block, colIndex) => {
+            if (isStartedGame) {
+              return (
+                <Block
+                  key={colIndex}
+                  onClick={() => secondHandleClick(rowIndex, colIndex)}
+                  state={block}
+                />
+              );
+            }
+            return (
+              <Block
+                key={colIndex}
+                onClick={() => firstHandleClick(rowIndex, colIndex)}
+                state={block}
+              />
+            );
+          })}
         </div>
       ))}
     </div>
