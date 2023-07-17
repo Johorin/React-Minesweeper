@@ -41,22 +41,42 @@ import { Block } from "../atoms/button/Block";
 
 type boardType = "hide" | "empty" | "aroundBomsNum";
 
+const tileNum: number = 5;
+const [board, setBoard] = useState<boardType[][]>([
+  ["hide", "hide", "hide", "hide", "hide"],
+  ["hide", "hide", "hide", "hide", "hide"],
+  ["hide", "hide", "hide", "hide", "hide"],
+  ["hide", "hide", "hide", "hide", "hide"],
+  ["hide", "hide", "hide", "hide", "hide"],
+]);
+const setBoms = () => {
+  let newBoard = [...board];
+  let hideCount = 0;
+  // let bomsNum = 0; // 設置する爆弾の数
+  // const hideState: string = "hide";
+  const hideState: string = "hide";
+
+  // ブロックが連鎖的に削除された後、消されずに残ったブロックを数える
+  for (let i = 0; i < tileNum; i++) {
+    for (let j = 0; j < tileNum; j++) {
+      if (newBoard[i][j] === hideState) {
+        hideCount++;
+      }
+    }
+  }
+  // bomsNum = Math.floor((3 / 4) * hideCount);
+};
+
 export const Board: React.FC = () => {
-  const tileNum: number = 5;
-  const [board, setBoard] = useState<boardType[][]>([
-    ["hide", "hide", "hide", "hide", "hide"],
-    ["hide", "hide", "hide", "hide", "hide"],
-    ["hide", "hide", "hide", "hide", "hide"],
-    ["hide", "hide", "hide", "hide", "hide"],
-    ["hide", "hide", "hide", "hide", "hide"],
-  ]);
   const [isStartedGame, setIsStartedGame] = useState(false);
+
+  setBoms();
 
   /**
    * 一番初めにクリックすると爆弾がないブロックがまとめて開かれる処理
    */
   const firstHandleClick = (row: number, col: number) => {
-    const newBoard = [...board];
+    let newBoard = [...board];
 
     // クリックされたブロックの上下左右のブロックを全部開ける
     for (let i = 0; i < tileNum; i++) {
@@ -66,12 +86,10 @@ export const Board: React.FC = () => {
         }
       }
     }
+
     setBoard(newBoard);
     setIsStartedGame(true);
-    setBoms();
   };
-
-  const setBoms = () => {};
 
   const secondHandleClick = (row: number, col: number) => {};
 

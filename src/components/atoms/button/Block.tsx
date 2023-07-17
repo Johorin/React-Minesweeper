@@ -31,7 +31,13 @@ import React from "react";
 interface BlockProps {
   key: number;
   onClick: () => void;
-  state: "hide" | "empty" | "aroundBomsNum";
+  state:
+    | "hide"
+    | "bombVisible"
+    | "bombHidden"
+    | "empty"
+    | "aroundBomsNum"
+    | "aroundBomsNumHidden";
   disabled?: boolean;
 }
 
