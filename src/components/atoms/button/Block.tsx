@@ -31,9 +31,8 @@ import React from "react";
 interface BlockProps {
   key: number;
   onClick: () => void;
-  // isOpen: boolean;
+  state: "hide" | "empty" | "aroundBomsNum";
   disabled?: boolean;
-  state: "hide" | "empty" | number;
 }
 
 export const Block: React.FC<BlockProps> = (props) => {
@@ -63,6 +62,18 @@ export const Block: React.FC<BlockProps> = (props) => {
           disabled={true}
         />
       );
+    case "aroundBomsNum":
     default:
+      return (
+        <button
+          style={{
+            width: "50px",
+            height: "50px",
+            backgroundColor: "white",
+          }}
+          onClick={props.onClick}
+          disabled={true}
+        />
+      );
   }
 };

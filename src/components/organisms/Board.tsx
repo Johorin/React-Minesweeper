@@ -39,9 +39,11 @@
 import React, { useState } from "react";
 import { Block } from "../atoms/button/Block";
 
+type boardType = "hide" | "empty" | "aroundBomsNum";
+
 export const Board: React.FC = () => {
   const tileNum: number = 5;
-  const [board, setBoard] = useState<string[][]>([
+  const [board, setBoard] = useState<boardType[][]>([
     ["hide", "hide", "hide", "hide", "hide"],
     ["hide", "hide", "hide", "hide", "hide"],
     ["hide", "hide", "hide", "hide", "hide"],
@@ -53,7 +55,7 @@ export const Board: React.FC = () => {
   /**
    * 一番初めにクリックすると爆弾がないブロックがまとめて開かれる処理
    */
-  const firstHandleClick = (row: number, col: number, isOpen: boolean) => {
+  const firstHandleClick = (row: number, col: number) => {
     const newBoard = [...board];
 
     // クリックされたブロックの上下左右のブロックを全部開ける
@@ -64,15 +66,14 @@ export const Board: React.FC = () => {
         }
       }
     }
-    console.log(newBoard);
     setBoard(newBoard);
     setIsStartedGame(true);
-    setBom();
+    setBoms();
   };
 
-  const setBom = () => {};
+  const setBoms = () => {};
 
-  const secondHandleClick = (row: number, col: number, isOpen: boolean) => {};
+  const secondHandleClick = (row: number, col: number) => {};
 
   return (
     <div>
