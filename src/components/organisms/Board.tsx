@@ -1,43 +1,6 @@
-// import { Block } from "../atoms/button/Block";
-// import styled from "styled-components";
-// // import { Router } from "./router/Router";
-
-// // タイルフィールドを生成するメソッド
-// const generateField = () => {
-//   const tileNum = 5;
-//   let blocks = [...Array(10)];
-//   let rowBlocks = [];
-
-//   for (let i = 0; i < tileNum; i++) {
-//     rowBlocks.push(
-//       <SLi>
-//         <Block />
-//       </SLi>
-//     );
-//   }
-//   for (let j = 0; j < tileNum; j++) {
-//     blocks.push(<SUl>{rowBlocks}</SUl>);
-//   }
-//   return blocks;
-// };
-
-// export default function App() {
-//   // return <Router />;
-//   return <div className="field-wrapper">{generateField()}</div>;
-// }
-
-// const SLi = styled.li`
-//   list-style: none;
-// `;
-
-// const SUl = styled.ul`
-//   display: flex;
-//   margin: 0px;
-//   height: 50px;
-// `;
-
 import React, { useState } from "react";
 import { Block } from "../atoms/button/Block";
+import { HIDE, BOMBVISIBLE, BOMBHIDDEN, EMPTY, AROUNDBOMSNUM, AROUNDBOMSNUMHIDDEN } from "../../global"
 
 type boardType = "hide" | "empty" | "aroundBomsNum";
 
@@ -51,20 +14,34 @@ const [board, setBoard] = useState<boardType[][]>([
 ]);
 const setBoms = () => {
   let newBoard = [...board];
-  let hideCount = 0;
-  // let bomsNum = 0; // 設置する爆弾の数
+  let hideCount: number = 0;
+  let bomsNum = Math.floor((tileNum * tileNum) / 2); // 設置する爆弾の数
   // const hideState: string = "hide";
   const hideState: string = "hide";
 
-  // ブロックが連鎖的に削除された後、消されずに残ったブロックを数える
-  for (let i = 0; i < tileNum; i++) {
-    for (let j = 0; j < tileNum; j++) {
-      if (newBoard[i][j] === hideState) {
-        hideCount++;
-      }
-    }
-  }
+  // // ブロックが連鎖的に削除された後、消されずに残ったブロックを数える
+  // for (let i = 0; i < tileNum; i++) {
+  //   for (let j = 0; j < tileNum; j++) {
+  //     if (newBoard[i][j] === hideState) {
+  //       hideCount++;
+  //     }
+  //   }
+  // }
   // bomsNum = Math.floor((3 / 4) * hideCount);
+  newBoard.fill('bombHidden')
+};
+
+const arrayShuffle = (array: Array<string>) => {
+  for (let i = array.length - 1; 0 < i; i--) {
+    // 0〜(i+1)の範囲で値を取得
+    let r = Math.floor(Math.random() * (i + 1));
+
+    // 要素の並び替えを実行
+    let tmp = array[i];
+    array[i] = array[r];
+    array[r] = tmp;
+  }
+  return array;
 };
 
 export const Board: React.FC = () => {
