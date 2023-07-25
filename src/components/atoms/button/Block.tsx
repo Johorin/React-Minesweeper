@@ -1,49 +1,45 @@
-// import { useState } from "react";
-// import styled from "styled-components";
+// import React from "react";
 
-// export const Block = () => {
-//   let { isOpen, setIsOpen } = useState(false);
+// interface BlockProps {
+//   key: number;
+//   onClick: () => void;
+// }
 
-//   const onClickBlock = () => {
-//     setIsOpen(true);
-//     console.log(isOpen);
-//   };
-
-//   if (!isOpen) {
-//     return <SButton onClink={onClickBlock}></SButton>;
-//   }
-//   console.log("isOpenがtrue");
-
-//   return;
+// export const Block: React.FC<BlockProps> = (props) => {
+//   const { onClick } = props;
+//   return (
+//     <button
+//       style={{
+//         width: "50px",
+//         height: "50px",
+//         display: "inline-block",
+//         backgroundColor: "grey"
+//       }}
+//       onClick={onClick}
+//     />
+//   );
 // };
 
-// const SButton = styled.button`
-//   background-color: grey;
-//   width: 50px;
-//   height: 50px;
-//   &:hover {
-//     cursor: pointer;
-//   }
-// `;
-
 import React from "react";
+import { blockStates } from "../../../global/consts/reducer";
 
 interface BlockProps {
   key: number;
   onClick: () => void;
   state:
-    | "hide"
+    | "default"
+    | "emptyVisible"
+    | "emptyHidden"
     | "bombVisible"
     | "bombHidden"
-    | "empty"
-    | "aroundBomsNum"
+    | "aroundBomsNumVisible"
     | "aroundBomsNumHidden";
   disabled?: boolean;
 }
 
 export const Block: React.FC<BlockProps> = (props) => {
   switch (props.state) {
-    case "hide":
+    case "default":
       return (
         <button
           style={{
@@ -56,7 +52,7 @@ export const Block: React.FC<BlockProps> = (props) => {
           disabled={false}
         />
       );
-    case "empty":
+    case "emptyHidden":
       return (
         <button
           style={{
@@ -68,7 +64,7 @@ export const Block: React.FC<BlockProps> = (props) => {
           disabled={true}
         />
       );
-    case "aroundBomsNum":
+    case "aroundBomsNumHidden":
     default:
       return (
         <button
