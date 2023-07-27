@@ -50,7 +50,7 @@
 //   );
 // };
 
-import React, { useState } from "react";
+import React, { useState, memo, useEffect } from "react";
 import { Block } from "../atoms/button/Block";
 import { blockStates } from "../../global/consts/reducer";
 
@@ -68,73 +68,91 @@ type boardType =
 const tileNum: number = 5;
 const boardRowArray = new Array<boardType>(tileNum).fill("default");
 
-/**
- * 爆弾を設置する
- */
-const setBoms = () => {
-  // const hideState: string = blockStates.DEFAULT;
-  // const emptyHidden: string = blockStates.EMPTY_HIDDEN;
-  // const bombHidden: string = blockStates.BOMB_HIDDEN;
-  // const aroundBomsNumHidden: string = blockStates.AROUND_BOMS_NUM_HIDDEN;
-  // // let newBoard: boardType[][] = [...board];
-  // let bomsNum = Math.floor((tileNum * tileNum) / 2); // 設置する爆弾の数
-  // let setBombsCount = 0; // 設置された爆弾をカウント
-  // // 指定された数の爆弾を盤面の前から並べる
-  // outer: for (let i = 0; i < tileNum; i++) {
-  //   for (let j = 0; j < tileNum; j++) {
-  //     // 指定された数の爆弾が設置し終わったら終了
-  //     if (setBombsCount === bomsNum) break outer;
-  //     newBoard[i][j] = "bombHidden"; // 爆弾設置
-  //     setBombsCount++;
-  //   }
-  // }
-  // console.log(newBoard);
-  // return;
-  // newBoard = shuffleBoard（newBoard）；
-  // newBoard.fill("bombHidden");
-};
-
-/**
- * 盤面をシャッフルする
- */
-const shuffleBoard = (array: Array<boardType[]>) => {
-  // // 二次元配列盤面を一度一次元に直す
-  // let linerArray: Array<boardType> = [];
-  // for (let i = 0; i < tileNum; i++) {
-  //   // linerArray += array[i];
-  //   linerArray = [...linerArray, ...array[i]];
-  // }
-  // for (let i = linerArray.length - 1; i >= 0; i--) {
-  //   // 0〜(i+1)の範囲で値を取得（Math.random()は0〜1未満をランダムに取得する）
-  //   let r = Math.floor(Math.random() * (i + 1));
-  //   // 要素の並び替えを実行
-  //   let tmp = linerArray[i];
-  //   linerArray[i] = linerArray[r];
-  //   linerArray[r] = tmp;
-  // }
-  // return array;
-};
-
 export const Board: React.FC = () => {
   const [isStartedGame, setIsStartedGame] = useState(false);
   // デフォルトのゲーム盤
-  const [board, setBoard] = useState<Array<boardType[]>>(() => {
-    return new Array<Array<boardType>>(tileNum).fill(boardRowArray);
+  const [board, setBoard] = useState<boardType[][]>(() => {
+    return new Array<boardType[]>(tileNum).fill(boardRowArray);
   });
+  // 設置する爆弾の数
+  const bomsNum: number = Math.floor((tileNum * tileNum) / 2);
 
-  // 初めに爆弾をセット
-  // setBoms();
+  /**
+   * 一次元配列を指定された列数で分割して二次元配列に変換する
+   */
+  function splitArrayToChunks(array: boardType[], columnSize: number) {
+    let result = [];
+
+    for (let i = 0; i < array.length; i += columnSize) {
+      result.push(array.slice(i, i + columnSize));
+    }
+
+    return result;
+  }
+
+  /**
+   * 盤面をシャッフルする
+   */
+  const shuffleBoard = (board: boardType[][]) => {
+    console.log(board);
+    // 二次元配列盤面を一度一次元に直す
+    let linerArray: boardType[] = [];
+    for (let i = 0; i < tileNum; i++) {
+      linerArray = [...linerArray, ...board[i]];
+    }
+
+    for (let i = linerArray.length - 1; i >= 0; i--) {
+      // 0〜(i+1)の範囲で値を取得（Math.random()は0〜1未満をランダムに取得する）
+      let r = Math.floor(Math.random() * (i + 1));
+
+      // 要素の並び替えを実行
+      let tmp = linerArray[i];
+      linerArray[i] = linerArray[r];
+      linerArray[r] = tmp;
+    }
+
+    // 一次元にした盤面配列を二次元配列に直す
+    board = splitArrayToChunks(linerArray, tileNum);
+    return board;
+  };
+
+  /**
+   * 爆弾を設置する
+   */
+  const setBoms = (board: boardType[][], bomsNum: number) => {
+    const bombHidden = blockStates.BOMB_HIDDEN;
+
+    let setBombsCount = 0; // 設置された爆弾をカウント
+    // 指定された数の爆弾を盤面の前から並べる
+    let newBoard: boardType[][] = board.map((rowArray) =>
+      rowArray.map((block) => {
+        // 指定された数の爆弾が設置し終わったら終了
+        if (setBombsCount === bomsNum) return block;
+
+        setBombsCount++;
+        return bombHidden;
+      })
+    );
+
+    console.log(newBoard);
+
+    newBoard = shuffleBoard(newBoard);
+    setBoard(newBoard);
+  };
+
+  // 初めにのみ爆弾をセットして盤面シャッフル
+  useEffect(() => {
+    setBoms(board, bomsNum);
+    // shuffleBoard(board);
+  }, []);
 
   /**
    * 一番初めにクリックした時の処理
    */
   const firstHandleClick = (row: number, col: number) => {
-    const hideState = blockStates.DEFAULT;
     const emptyHidden = blockStates.EMPTY_HIDDEN;
 
-    const newBoard: boardType[][] = board.map((rowArray) =>
-      rowArray.map((tile) => hideState)
-    );
+    const newBoard: boardType[][] = board.map((rowArray) => [...rowArray]);
     // 下の書き方ではboardの二次元要素以降については参照渡しになってしまうので注意
     // let newBoard: boardType[][] = [...board];
 
@@ -160,20 +178,20 @@ export const Board: React.FC = () => {
         <div
           key={rowIndex}
           style={{
-            height: "50px",
+            height: "50px"
           }}
         >
           {row.map((block, colIndex) => {
-            if (isStartedGame) {
-              // console.log("isStartedGame");
-              return (
-                <Block
-                  key={colIndex}
-                  onClick={() => secondHandleClick(rowIndex, colIndex)}
-                  state={block}
-                />
-              );
-            }
+            // if (isStartedGame) {
+            //   // console.log("isStartedGame");
+            //   return (
+            //     <Block
+            //       key={colIndex}
+            //       onClick={() => secondHandleClick(rowIndex, colIndex)}
+            //       state={block}
+            //     />
+            //   );
+            // }
             // console.log("isNotStartedGame");
             // console.log(board);
             return (

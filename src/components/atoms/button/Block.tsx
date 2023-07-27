@@ -45,7 +45,6 @@ export const Block: React.FC<BlockProps> = (props) => {
           style={{
             width: "50px",
             height: "50px",
-            display: "inline-block",
             backgroundColor: "grey",
           }}
           onClick={props.onClick}
@@ -59,6 +58,18 @@ export const Block: React.FC<BlockProps> = (props) => {
             width: "50px",
             height: "50px",
             backgroundColor: "white",
+          }}
+          onClick={props.onClick}
+          disabled={true}
+        />
+      );
+    case "bombHidden":
+      return (
+        <button
+          style={{
+            width: "50px",
+            height: "50px",
+            backgroundColor: "red",
           }}
           onClick={props.onClick}
           disabled={true}
